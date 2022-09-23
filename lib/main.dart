@@ -49,38 +49,40 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
+      // appBar: AppBar(
+      //   title: Text(widget.title),
+      // ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            // const Text(
-            //   'You have pushed the button this many times:',
-            // ),
-            // AnimatedRotatingText(
-            //   text: '$_counter',
-            //   // style: Theme.of(context).textTheme.headlineMedium,
-            // ),
-//             PainfulParagraph(text:
-// "On the other hand, we denounce with righteous indignation and dislike men who "
-// "are so beguiled and demoralized by the charms of pleasure of the moment, so "
-// "blinded by desire, that they cannot foresee the pain and trouble that are bound "
-// "to ensue; and equal blame belongs to those who fail in their duty through "
-// "weakness of will, which is the same as saying through shrinking from toil and "
-// "pain. These cases are perfectly simple and easy to distinguish. In a free hour, "
-// "when our power of choice is untrammelled and when nothing prevents our being "
-// "able to do what we like best, every pleasure is to be welcomed and every pain "
-// "avoided. But in certain circumstances and owing to the claims of duty or the "
-// "obligations of business it will frequently occur that pleasures have to be "
-// "repudiated and annoyances accepted. The wise man therefore always holds in "
-// "these matters to this principle of selection: he rejects pleasures to secure "
-// "other greater pleasures, or else he endures pains to avoid worse pains."),
-            PainfulTiger(),
-          ],
-        ),
+        child: PainfulTigerGrid(count: 200),
       ),
+//         child: Column(
+//           mainAxisAlignment: MainAxisAlignment.center,
+//           children: <Widget>[
+//             // const Text(
+//             //   'You have pushed the button this many times:',
+//             // ),
+//             // AnimatedRotatingText(
+//             //   text: '$_counter',
+//             //   // style: Theme.of(context).textTheme.headlineMedium,
+//             // ),
+// //             PainfulParagraph(text:
+// // "On the other hand, we denounce with righteous indignation and dislike men who "
+// // "are so beguiled and demoralized by the charms of pleasure of the moment, so "
+// // "blinded by desire, that they cannot foresee the pain and trouble that are bound "
+// // "to ensue; and equal blame belongs to those who fail in their duty through "
+// // "weakness of will, which is the same as saying through shrinking from toil and "
+// // "pain. These cases are perfectly simple and easy to distinguish. In a free hour, "
+// // "when our power of choice is untrammelled and when nothing prevents our being "
+// // "able to do what we like best, every pleasure is to be welcomed and every pain "
+// // "avoided. But in certain circumstances and owing to the claims of duty or the "
+// // "obligations of business it will frequently occur that pleasures have to be "
+// // "repudiated and annoyances accepted. The wise man therefore always holds in "
+// // "these matters to this principle of selection: he rejects pleasures to secure "
+// // "other greater pleasures, or else he endures pains to avoid worse pains."),
+//             PainfulTigerGrid(count: 1),
+//           ],
+//         ),
+//      ),
       floatingActionButton: FloatingActionButton(
         onPressed: _incrementCounter,
         tooltip: 'Increment',
@@ -114,15 +116,16 @@ class PainfulAnimationState extends State<PainfulAnimation>
     super.initState();
     _rotationController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 10),
+      duration: const Duration(seconds: 2),
     )
     ..repeat();
 
     _scaleController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 3),
+      duration: const Duration(seconds: 2),
     )
-    ..repeat(reverse: true);
+    ..forward();
+    //..repeat(reverse: true);
 
     _clipController = AnimationController(
       vsync: this,
@@ -151,118 +154,56 @@ class PainfulAnimationState extends State<PainfulAnimation>
 
   @override
   Widget build(BuildContext context) {
-    final Widget rotatingTiger = RotationTransition(
-      turns: _rotationController,
-      child: widget.child,
-    );
-    // final ClipPath innerClip = ClipPath(
-    //   clipper: StarClipper(
-    //     8,
-    //     degreesOffset: 3.0 * _clipController.value * 360.0,
-    //   ),
-    //   child: SizedBox(
-    //     width: 200,
-    //     height: 200,
-    //     child: Container(
-    //       color: Colors.orange,
-    //       child: rotatingTiger,
-    //     ),
-    //   ),
-    // );
-    // final ClipPath middleClip = ClipPath(
-    //   clipper: StarClipper(
-    //     4,
-    //     degreesOffset: 2.0 * _clipController.value * 360.0,
-    //   ),
-    //   child: SizedBox(
-    //     width: 300,
-    //     height: 300,
-    //     child: Container(
-    //       color: Colors.black,
-    //       child: innerClip,
-    //       //child: rotatingTiger,
-    //     ),
-    //   ),
-    // );
-    final clip = ClipPath(
-      clipper:
-      // RandomBezierClipper(250),
-      StarClipper(
-        360,
-        degreesOffset: _clipController.value * 360.0,
-        innerScale: 0.3,
+    return
+    ClipPath(
+      clipper: StarClipper(
+        32,
+        innerScale: 0.55,
       ),
-      child: SizedBox(
-
-
-
-
-
-
-
-        // When these are smaller, there is no crash under Impeller.
-        // With these values it does crash on iPhone 11 Pro.
-        width: 600,
-        height: 600,
-        child: Container(
-          color: Colors.orange,
-          //child: middleClip,
-          child: rotatingTiger,
+      child: ClipPath(
+        clipper: StarClipper(
+          32,
+          innerScale: 0.55,
+        ),
+        child: Transform(
+          transform: Matrix4.rotationY(0.5)
+            ..setEntry(3, 0, 0.0005),
+          child: widget.child,
         ),
       ),
     );
-    final transform = Transform(
-      child: clip,
-      transform: Matrix4.rotationY(0.5)
-        ..setEntry(3, 0, 0.00225 /** (_flipController.value - 0.5)*/),
-      alignment: Alignment.center,
-    );
-    return SizedBox(
-      height: 450,
-      width: 450,
-      child: ImageFiltered(
-        enabled: false,
-        imageFilter: ImageFilter.blur(
-          sigmaX: 2.0 * (1 - _flipController.value),
-          sigmaY: 2.0 * (1 - _flipController.value),
-        ),
-        child: Column(
+  }
+
+  Widget _flippingTiger(Widget clip) {
+    return flip.AnimatedPageFlipBuilder(
+      animation: _flipController,
+      showFrontSide: true,
+      frontBuilder: (BuildContext context) {
+        return Column(
           children: <Widget>[
             Text(
               'It is a tiger!',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
             clip,
-            //transform,
           ],
-        ),
-        // child: flip.AnimatedPageFlipBuilder(
-        //   animation: _flipController,
-        //   showFrontSide: true,
-        //   frontBuilder: (BuildContext context) {
-        //     return Column(
-        //       children: <Widget>[
-        //         Text(
-        //           'It is a tiger!',
-        //           style: Theme.of(context).textTheme.headlineMedium,
-        //         ),
-        //         clip,
-        //       ],
-        //     );
-        //   },
-        //   backBuilder: (BuildContext context) {
-        //     return Column(
-        //       children: <Widget>[
-        //         Text(
-        //           'Rawrrrr!',
-        //           style: Theme.of(context).textTheme.headlineMedium,
-        //         ),
-        //         clip,
-        //       ],
-        //     );
-        //   },
-        // ),
-      ),
+        );
+      },
+      backBuilder: (BuildContext context) {
+        return Column(
+          children: <Widget>[
+            Text(
+              'Rawrrrr!',
+              style: Theme.of(context).textTheme.headlineMedium,
+            ),
+            Transform(
+              child: clip,
+              alignment: Alignment.center,
+              transform: Matrix4.rotationY(3.1415),
+            ),
+          ],
+        );
+      },
     );
   }
 }
@@ -284,12 +225,46 @@ class PainfulParagraph extends StatelessWidget {
 }
 
 class PainfulTiger extends StatelessWidget {
-  const PainfulTiger({super.key});
+  const PainfulTiger({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
     return PainfulAnimation(
-      child: svg.SvgPicture.asset('assets/tiger.svg'),
+      child: svg.SvgPicture.asset(
+        'assets/tiger.svg',
+      ),
+    );
+  }
+}
+
+
+class PainfulTigerGrid extends StatelessWidget {
+  const PainfulTigerGrid({
+    super.key,
+    required this.count,
+  });
+
+  final int count;
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomScrollView(
+      slivers: <Widget>[
+        SliverGrid(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 1,
+            childAspectRatio: 1.0,
+          ),
+          delegate: SliverChildBuilderDelegate(
+            (BuildContext context, int index) {
+              return PainfulTiger(/*width: 250, height: 250*/);
+            },
+            childCount: count,
+          ),
+        ),
+      ],
     );
   }
 }
